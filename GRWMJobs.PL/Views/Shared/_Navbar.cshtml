@@ -1,0 +1,63 @@
+﻿<nav class="navbar navbar-expand-lg navbar-modern sticky-top">
+    <div class="container-fluid px-4">
+
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <span class="brand-text">GRWMJobs</span>
+        </a>
+
+
+        <button class="navbar-toggler modern-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link modern-nav-link" asp-controller="Home" asp-action="Index">
+                        <i class="fa-solid fa-home me-2"></i>Home
+                    </a>
+                </li>
+            </ul>
+
+
+            <ul class="navbar-nav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item me-2">
+                            <a class="nav-link modern-nav-link admin-link" asp-controller="Admin" asp-action="Dashboard">
+                                <i class="fa-solid fa-chart-line me-2"></i>Dashboard
+                            </a>
+                        </li>
+                    }
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle modern-nav-link user-dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <span class="user-name">@User.Identity.Name</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end modern-dropdown">
+                            <li><a class="dropdown-item logout-item" asp-controller="Auth" asp-action="Logout"><i class="fa-solid fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item me-2">
+                        <a class="nav-link modern-nav-link" asp-controller="Auth" asp-action="Login">
+                            <i class="fa-solid fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-gradient-register" asp-controller="Auth" asp-action="Register">
+                            <i class="fa-solid fa-user-plus me-2"></i>Register
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
