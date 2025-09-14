@@ -1,0 +1,21 @@
+﻿@model GRWMJobs.DAL.Models.Track
+@{
+    ViewData["Title"] = "Create Track";
+}
+<div class="container py-4">
+    <h3>Create Track</h3>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Image (optional)</label>
+            <input type="file" name="image" accept="image/*" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>
+
+

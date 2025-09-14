@@ -1,0 +1,21 @@
+﻿@model GRWMJobs.DAL.Models.User
+@{
+    ViewData["Title"] = "Delete User";
+}
+<div class="container py-5">
+    <h3 class="text-danger">Delete User</h3>
+    <p>Are you sure you want to delete this user?</p>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div><strong>Name:</strong> @Model.Name</div>
+            <div><strong>Email:</strong> @Model.Email</div>
+        </div>
+    </div>
+    <form method="post" action="@Url.Action("DeleteConfirmed","User", new { id = Model.Id })">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a class="btn btn-secondary" href="@Url.Action("Index", "User")">Cancel</a>
+    </form>
+</div>
+
+

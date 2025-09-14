@@ -1,0 +1,51 @@
+﻿@model IEnumerable<GRWMJobs.DAL.Models.Answer>
+@{
+    var categoryId = ViewBag.CategoryId as int?;
+}
+@if (!Model.Any())
+{
+    <div class="alert alert-info border-0 shadow-sm">No answers yet.</div>
+}
+else
+{
+    foreach (var a in Model)
+    {
+        <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-start">
+                    <div class="me-3 d-flex align-items-center justify-content-center rounded-circle bg-warning-subtle" style="width:40px;height:40px;">
+                        <i class="fa-solid fa-lightbulb text-warning"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="mb-2" style="white-space:pre-wrap;">@a.Content</div>
+                        @if (!string.IsNullOrEmpty(a.ImagePath))
+                        {
+                            <img src="@a.ImagePath" alt="Answer image" class="img-fluid rounded-3 border mb-2 shadow-sm" style="max-height:520px; width:100%; object-fit:contain;" />
+                        }
+                        @if (a.Images != null && a.Images.Any())
+                        {
+                            <div class="mt-2">
+                                @foreach (var img in a.Images)
+                                {
+                                    <img src="@img.FilePath" alt="Answer image" class="img-fluid rounded-3 border mb-2 shadow-sm" style="max-height:520px; width:100%; object-fit:contain;" />
+                                }
+                            </div>
+                        }
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small class="text-muted">Updated @a.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy")</small>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="d-flex gap-2">
+                                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit", "Answer", new { id = a.Id })">Edit</a>
+                                    <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "Answer", new { id = a.Id, categoryId = categoryId ?? a.Question?.CategoryId })">Delete</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+

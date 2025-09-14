@@ -1,0 +1,43 @@
+﻿@model IEnumerable<GRWMJobs.DAL.Models.User>
+@{
+    ViewData["Title"] = "Users";
+}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Registered Users</h2>
+        <a class="btn btn-outline-secondary" href="@Url.Action("Index", "Home")">Back</a>
+    </div>
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Registered At</th>
+                    <th>Last Login</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>@u.Name</td>
+                        <td>@u.Email</td>
+                        <td>@u.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@(u.LastLoginAt.HasValue? u.LastLoginAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "-")</td>
+                        <td>@u.Role</td>
+                        <td class="text-end">
+                            @if (u.Role != GRWMJobs.DAL.Models.Role.Admin)
+                            {
+                                <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "User", new { id = u.Id })">Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

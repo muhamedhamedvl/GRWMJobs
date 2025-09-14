@@ -1,0 +1,19 @@
+﻿@model GRWMJobs.DAL.Models.Category
+@{
+    ViewData["Title"] = "Delete Category";
+}
+<div class="container py-4">
+    <div class="content-panel">
+        <h3 class="text-danger">Delete Category</h3>
+        <p>Are you sure you want to delete the category "@Model.Name"?</p>
+        <form method="post" action="@Url.Action("DeleteConfirmed","Category", new { id = Model.Id, trackId = Model.TrackId })">
+            @Html.AntiForgeryToken()
+            <div class="page-actions">
+                <button type="submit" class="btn btn-danger">Yes, delete</button>
+                <a class="btn btn-secondary" href="@Url.Action("Details", "Track", new { id = Model.TrackId })">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+

@@ -1,0 +1,39 @@
+﻿@model GRWMJobs.DAL.Models.Question
+@{
+    ViewData["Title"] = "Create Question";
+}
+<div class="container py-4">
+    <div class="page-head">
+        <div>
+            <h3 class="mb-0">Create Question</h3>
+            <div class="lead">Write a clear question and optional image</div>
+        </div>
+        <div class="page-actions">
+            <a class="btn btn-outline-secondary" asp-controller="Category" asp-action="Details" asp-route-id="@ViewBag.CategoryId">Back</a>
+        </div>
+    </div>
+    <form class="form-panel" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" />
+        </div>
+        <input type="hidden" asp-for="SubcategoryId" value="@ViewBag.SubcategoryId" />
+        <div class="mb-3">
+            <label class="form-label">Image (optional)</label>
+            <input type="file" name="image" accept="image/*" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Additional Images (optional, multiple)</label>
+            <input type="file" name="images" accept="image/*" class="form-control" multiple />
+        </div>
+        <input type="hidden" asp-for="TrackId" value="@ViewBag.TrackId" />
+        <input type="hidden" asp-for="CategoryId" value="@ViewBag.CategoryId" />
+
+        <div class="page-actions mt-2">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-secondary" asp-controller="Category" asp-action="Details" asp-route-id="@ViewBag.CategoryId">Cancel</a>
+        </div>
+    </form>
+</div>
+
+

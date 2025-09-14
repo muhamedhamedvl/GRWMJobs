@@ -1,0 +1,15 @@
+﻿@model GRWMJobs.DAL.Models.Track
+@{
+    ViewData["Title"] = "Delete Track";
+}
+<div class="container py-4">
+    <h3 class="text-danger">Delete Track</h3>
+    <p>Are you sure you want to delete the track "@Model.Name"?</p>
+    <form method="post" action="@Url.Action("DeleteConfirmed","Track", new { id = Model.Id })">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a class="btn btn-secondary" href="@Url.Action("Index", "Track")">Cancel</a>
+    </form>
+</div>
+
+

@@ -1,0 +1,28 @@
+﻿@model GRWMJobs.DAL.Models.Question
+@{
+    ViewData["Title"] = "Delete Question";
+    var categoryId = ViewBag.CategoryId as int?;
+}
+<div class="container py-4">
+    <div class="content-panel">
+        <h3 class="text-danger">Delete Question</h3>
+        <p>Are you sure you want to delete the question "@Model.Title"?</p>
+        <div class="card mb-3"><div class="card-body">@Model.Content</div></div>
+        <form method="post" action="@Url.Action("DeleteConfirmed","Question", new { id = Model.Id, categoryId = categoryId, subcategoryId = ViewBag.SubcategoryId })">
+            @Html.AntiForgeryToken()
+            <div class="page-actions">
+                <button type="submit" class="btn btn-danger">Yes, delete</button>
+                @if (ViewBag.SubcategoryId != null)
+                {
+                    <a class="btn btn-secondary" href="@Url.Action("Details", "Subcategory", new { id = ViewBag.SubcategoryId })">Cancel</a>
+                }
+                else
+                {
+                    <a class="btn btn-secondary" href="@Url.Action("Details", "Category", new { id = categoryId })">Cancel</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+

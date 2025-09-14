@@ -1,0 +1,105 @@
+﻿@model GRWMJobs.PL.Models.QuestionListViewModel
+@{
+    ViewData["Title"] = "Questions";
+}
+<div class="container py-5">
+    <div class="page-head">
+        <div>
+            <h3 class="mb-0">Questions</h3>
+            <div class="lead">Browse questions and reveal answers</div>
+        </div>
+        <div class="page-actions">
+            <a class="btn btn-outline-secondary" href="@Url.Action("Details", "Track", new { id = Model.TrackId })"><i class="fa-solid fa-arrow-left me-2"></i>Back to Track</a>
+        </div>
+    </div>
+
+    <form method="get" action="@Url.Action("Index","Question")" class="row g-2 align-items-center mb-3">
+        <input type="hidden" name="trackId" value="@Model.TrackId" />
+        <div class="col-sm-8 col-md-9">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Search questions..." />
+        </div>
+        <div class="col-sm-4 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+            <a class="btn btn-outline-secondary" href="@Url.Action("Index", "Question", new { trackId = Model.TrackId })">Reset</a>
+        </div>
+    </form>
+
+    <div class="accordion" id="qAccordion">
+        @foreach (var q in Model.Questions)
+        {
+            <div class="accordion-item mb-3 border-0 shadow-sm">
+                <h2 class="accordion-header" id="q-@q.Id">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#qc-@q.Id" aria-expanded="false" aria-controls="qc-@q.Id">
+                        <span class="me-2 text-info"><i class="fa-solid fa-code"></i></span>
+                        <strong>@q.Title</strong>
+                    </button>
+                </h2>
+                <div id="qc-@q.Id" class="accordion-collapse collapse" aria-labelledby="q-@q.Id" data-bs-parent="#qAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <p class="mb-0">@q.Content</p>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="ms-3 d-flex gap-2">
+                                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit", "Question", new { id = q.Id })">Edit</a>
+                                    <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "Question", new { id = q.Id, categoryId = q.CategoryId, subcategoryId = q.SubcategoryId })">Delete</a>
+                                </div>
+                            }
+                        </div>
+                        <div id="answers-@q.Id">
+                            <button class="btn btn-sm btn-outline-success load-answers" data-question-id="@q.Id">
+                                <i class="fa-solid fa-eye me-1"></i> Show Answer
+                            </button>
+                            <div class="answers-container mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted">
+            Showing @(((Model.Page - 1) * Model.PageSize) + 1) - @(((((Model.Page - 1) * Model.PageSize) + Model.Questions.Count()) > Model.TotalCount) ? Model.TotalCount : (((Model.Page - 1) * Model.PageSize) + Model.Questions.Count())) of @Model.TotalCount
+        </div>
+        <nav aria-label="Questions pagination">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("Index", "Question", new { trackId = Model.TrackId, search = Model.Search, page = Model.Page - 1, pageSize = Model.PageSize })">Previous</a>
+                </li>
+                @for (var p = 1; p <= Model.TotalPages; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", "Question", new { trackId = Model.TrackId, search = Model.Search, page = p, pageSize = Model.PageSize })">@p</a>
+                    </li>
+                }
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("Index", "Question", new { trackId = Model.TrackId, search = Model.Search, page = Model.Page + 1, pageSize = Model.PageSize })">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('click', async function (e) {
+        const btn = e.target.closest('.load-answers');
+        if (!btn) return;
+        const qid = btn.getAttribute('data-question-id');
+        const container = btn.parentElement.querySelector('.answers-container');
+        if (container.getAttribute('data-loaded') === '1') {
+            container.classList.toggle('d-none');
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
+        const res = await fetch('@Url.Action("Answers", "Question")?questionId=' + qid);
+        const html = await res.text();
+        container.innerHTML = html;
+        container.setAttribute('data-loaded', '1');
+        btn.remove();
+    });
+</script>
+
+
+
