@@ -1,0 +1,254 @@
+﻿@model IEnumerable<GRWMJobs.DAL.Models.Track>
+
+@{
+    ViewData["Title"] = "Interview Q&A";
+}
+
+<!-- Hero -->
+<section class="hero-section text-center position-relative overflow-hidden">
+    <div class="container py-5 position-relative z-1">
+        <div class="hero-content">
+            <h1 class="hero-title fw-bold mb-4 text-gradient">
+                Ace Your Next Tech Interview
+            </h1>
+            <div class="hero-actions">
+                <a class="btn btn-gradient btn-lg px-4 shadow-lg me-3" href="#tracks" aria-label="Jump to tracks section">
+                    <i class="fa-solid fa-rocket me-2"></i>Explore Tracks
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <style>
+        .hero-section {
+            background: #ffffff;
+            padding: 6rem 0;
+            position: relative;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #0d6efd, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-gradient {
+            background: #0d6efd;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            transition: all .2s ease;
+            font-weight: 500;
+        }
+
+        .btn-gradient:hover {
+            background: #0b5ed7;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+    </style>
+</section>
+
+<!-- Tracks -->
+<section id="tracks" class="container py-5">
+    <!-- Search -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0" id="trackSearchIcon">
+                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                </span>
+                <input id="trackSearch" type="search"
+                       class="form-control border-start-0 rounded-end-pill"
+                       placeholder="Search tracks..." aria-label="Search tracks"
+                       aria-describedby="trackSearchIcon" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Track Cards -->
+    <div class="row g-4">
+        @foreach (var track in Model)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 track-item" data-track-name="@track.Name">
+                <div class="card track-card h-100 border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            @if (!string.IsNullOrEmpty(track.ImagePath))
+                            {
+                                <img src="@track.ImagePath" alt="@track.Name image"
+                                     class="me-3 rounded-circle border track-image"
+                                     style="width:50px;height:50px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <div class="icon-circle me-3 animate-pulse">
+                                    <i class="fa-solid fa-microchip fa-lg"></i>
+                                </div>
+                            }
+                            <h5 class="card-title mb-0 fw-semibold">@track.Name</h5>
+                        </div>
+                        <p class="card-text text-muted">
+                            @if (track.Name != "General")
+                            {
+                            <p class="card-text text-muted">Crack interviews with handpicked questions for @track.Name.</p>
+                        }
+                        </p>
+                        <a class="btn btn-outline-primary stretched-link rounded-pill px-3"
+                           href="@Url.Action("Details", "Track", new { id = track.Id })">
+                            <i class="fa-solid fa-arrow-right me-2"></i>Explore
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Motivational Message Section -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="text-center motivational-message">
+                    <h2 class="motivational-title mb-3">Best Wishes</h2>
+                    <h3 class="motivational-subtitle mb-4">for the Interview!</h3>
+                    <p class="motivational-text">Be confident and believe in yourself.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="noResults" class="text-center text-muted py-5 d-none">
+        <i class="fa-regular fa-face-frown me-2"></i>No tracks match your search.
+    </div>
+
+    <style>
+        .track-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            transition: all .2s ease;
+        }
+
+        .track-card:hover {
+            transform: translateY(-2px);
+            border-color: #0d6efd;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .icon-circle:hover {
+            background: #0b5ed7;
+        }
+
+        .track-image {
+            transition: all 0.2s ease;
+        }
+
+        .track-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Motivational Message Styles */
+        .motivational-message {
+            background: linear-gradient(135deg, #fef7f7, #fce8e8);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            border: 1px solid #f5d0d0;
+            box-shadow: 0 4px 20px rgba(220, 38, 127, 0.1);
+        }
+
+        .motivational-title {
+            font-family: 'Brush Script MT', cursive, 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: #8b1538;
+            text-shadow: 2px 2px 4px rgba(139, 21, 56, 0.2);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .motivational-subtitle {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #8b1538;
+            margin-bottom: 1rem;
+        }
+
+        .motivational-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #8b1538;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        @@media (max-width: 768px) {
+            .motivational-title {
+                font-size: 2.5rem;
+            }
+            .motivational-subtitle {
+                font-size: 1.4rem;
+            }
+            .motivational-text {
+                font-size: 1.1rem;
+            }
+            .motivational-message {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var input = document.getElementById('trackSearch');
+            if (!input) return;
+            var items = Array.from(document.querySelectorAll('#tracks .track-item'));
+            var emptyState = document.getElementById('noResults');
+
+            function applyFilter() {
+                var query = (input.value || '').toLowerCase().trim();
+                var anyVisible = false;
+                items.forEach(function (el) {
+                    var name = (el.getAttribute('data-track-name') || '').toLowerCase();
+                    var match = name.includes(query);
+                    el.style.display = match ? '' : 'none';
+                    if (match) anyVisible = true;
+                });
+                emptyState.classList.toggle('d-none', anyVisible);
+            }
+
+            input.addEventListener('input', applyFilter);
+        });
+    </script>
+</section>
