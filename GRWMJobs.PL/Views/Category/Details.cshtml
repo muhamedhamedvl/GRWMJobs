@@ -1,0 +1,162 @@
+﻿@model IEnumerable<GRWMJobs.DAL.Models.Question>
+@{
+    var category = ViewBag.Category as GRWMJobs.DAL.Models.Category;
+    ViewData["Title"] = category?.Name + " Questions";
+}
+
+<div class="container py-5">
+    <div class="mb-4">
+        <a class="text-decoration-none" href="@Url.Action("Details", "Track", new { id = category?.TrackId })"><i class="fa-solid fa-arrow-left me-2"></i>Back</a>
+    </div>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">@category?.Name</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="btn btn-primary" href="@Url.Action("Create", "Question", new { trackId = category?.TrackId, categoryId = category?.Id })">Add Question</a>
+            <a class="btn btn-outline-primary ms-2" href="@Url.Action("Create", "Subcategory", new { categoryId = category?.Id })">Add Subcategory</a>
+        }
+    </div>
+
+    @if (User.Identity?.IsAuthenticated != true)
+    {
+        <div class="alert alert-info border-0 shadow-sm">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="fw-bold">You need to log in to view the questions</div>
+                    <a class="small text-decoration-underline" data-bs-toggle="collapse" href="#whyLogin" role="button" aria-expanded="false" aria-controls="whyLogin">Why?</a>
+                    <div class="collapse mt-2" id="whyLogin">
+                        <div style="background: #f9f9f9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                            <h3 style="margin-bottom: 12px; color: #222;">Why Registration is Required</h3>
+                            <p>
+                                <strong>Quality control and community value:</strong> By requiring registration to view the questions, we ensure that only genuinely interested users engage with our content. This helps filter out bots, random scrapers, or people who aren't serious about interviews. It also builds a sense of community, since everyone who can access the questions has at least taken the step to sign up.
+                            </p>
+                            <p><strong>Other key benefits:</strong></p>
+                            <ul style="margin: 10px 0 15px 20px;">
+                                <li><strong>Prevent content scraping</strong>: protects our hard work from being stolen.</li>
+                                <li><strong>Encourage user retention</strong>: registered users are more likely to return.</li>
+                                <li><strong>Personalization</strong>: in the future, we can tailor questions to your interests.</li>
+                            </ul>
+                            <p style="margin-top: 40px; font-size: 16px; color: #555; text-align: right; text-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
+                                GRWMJobs
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <a class="btn btn-primary" href="@Url.Action("Login", "Auth")">Login</a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        var subcategories = ViewBag.Subcategories as IEnumerable<GRWMJobs.DAL.Models.Subcategory>;
+        if (subcategories != null && subcategories.Any())
+        {
+            <div class="row g-4 mb-4">
+                @foreach (var sc in subcategories)
+                {
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card h-100 border-0 category-card">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    @if (!string.IsNullOrEmpty(sc.ImagePath))
+                                    {
+                                        <img src="@sc.ImagePath" alt="@sc.Name image" class="me-3 rounded-circle border" style="width:44px;height:44px;object-fit:cover;" />
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-diagram-project fa-xl text-secondary me-3"></i>
+                                    }
+                                    <h6 class="mb-0">@sc.Name</h6>
+                                </div>
+                                <a class="btn btn-outline-primary" href="@Url.Action("Details", "Subcategory", new { id = sc.Id })">Open Questions </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="mt-3 d-flex gap-2">
+                                        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit", "Subcategory", new { id = sc.Id })">Edit</a>
+                                        <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "Subcategory", new { id = sc.Id })">Delete</a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        <div class="accordion" id="qaAccordion">
+            @foreach (var q in Model)
+            {
+                <div class="accordion-item shadow-sm mb-3 border-0">
+                    <h2 class="accordion-header" id="heading-@q.Id">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@q.Id" aria-expanded="false" aria-controls="collapse-@q.Id">
+                            <span class="me-2 text-primary"><i class="fa-solid fa-circle-question"></i></span>
+                            <strong>@q.Title</strong>
+                        </button>
+                    </h2>
+                    <div id="collapse-@q.Id" class="accordion-collapse collapse" aria-labelledby="heading-@q.Id" data-bs-parent="#qaAccordion">
+                        <div class="accordion-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <p class="mb-2">@q.Content</p>
+                                    @if (!string.IsNullOrEmpty(q.ImagePath))
+                                    {
+                                        <img src="@q.ImagePath" alt="Question image" class="img-fluid rounded border" style="max-height:240px" />
+                                    }
+                                    @if (q.Images != null && q.Images.Any())
+                                    {
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            @foreach (var img in q.Images)
+                                            {
+                                                <img src="@img.FilePath" alt="Question image" class="img-thumbnail" style="max-height:180px" />
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="ms-3 d-flex gap-2">
+                                        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit", "Question", new { id = q.Id })">Edit</a>
+                                        <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "Question", new { id = q.Id, categoryId = category?.Id })">Delete</a>
+                                    </div>
+                                }
+                            </div>
+                            <div id="answers-@q.Id" class="answers">
+                                <button class="btn btn-sm btn-outline-success load-answers" data-question-id="@q.Id">
+                                    <i class="fa-solid fa-eye me-1"></i> Show Answer
+                                </button>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a class="btn btn-sm btn-primary ms-2" href="@Url.Action("Create", "Answer", new { questionId = q.Id })">Add Answer</a>
+                                }
+                                <div class="answers-container mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('click', async function (e) {
+        const btn = e.target.closest('.load-answers');
+        if (!btn) return;
+        const qid = btn.getAttribute('data-question-id');
+        const container = btn.parentElement.querySelector('.answers-container');
+        if (container.getAttribute('data-loaded') === '1') {
+            container.classList.toggle('d-none');
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
+        const res = await fetch('@Url.Action("Answers", "Question")?questionId=' + qid);
+        const html = await res.text();
+        container.innerHTML = html;
+        container.setAttribute('data-loaded', '1');
+        btn.remove();
+    });
+</script>
+
+
