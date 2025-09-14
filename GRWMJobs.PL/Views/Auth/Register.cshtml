@@ -1,0 +1,281 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+<!-- Register Form -->
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card auth-card">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <span class="brand-text">GRWMJobs</span>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div><i class="fas fa-exclamation-circle me-2"></i>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Username
+                                </label>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Enter your username" required />
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required />
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" id="regPassword" name="password" class="form-control border-start-0" placeholder="Create a strong password" required />
+                                    <button class="btn btn-outline-secondary border-start-0" type="button" id="toggleRegPassword" title="Show password">
+                                        <i class="fas fa-eye" id="toggleRegIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="confirmPassword" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Confirm Password
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control border-start-0" placeholder="Confirm your password" required />
+                                    <button class="btn btn-outline-secondary border-start-0" type="button" id="toggleConfirmPassword" title="Show password">
+                                        <i class="fas fa-eye" id="toggleConfirmIcon"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-robot me-2"></i>Verification Code
+                                </label>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <img id="regCodeImg" src="@Url.Action("RegistrationCode", "Auth")" alt="Verification code"
+                                         class="border rounded" style="height:40px; cursor:pointer;" title="Click to refresh" />
+                                    <input type="text" name="verificationCode" class="form-control" placeholder="Enter the code" required />
+                                </div>
+                                <small class="text-muted">Click on the code to change it</small>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="mb-0">
+                            Already have an account?
+                            <a asp-controller="Auth" asp-action="Login" class="text-decoration-none">Sign in here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    document.addEventListener('click', function (e) {
+        const img = e.target.closest('#regCodeImg');
+        if (!img) return;
+        const url = '@Url.Action("RegistrationCode", "Auth")' + '?_=' + Date.now();
+        img.setAttribute('src', url);
+    });
+
+    // Password confirmation validation and toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordField = document.getElementById('regPassword');
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        const passwordMatchDiv = document.getElementById('passwordMatch');
+        const form = document.querySelector('form');
+
+    // Password toggle functionality
+    const togglePassword = document.getElementById('toggleRegPassword');
+    const togglePasswordIcon = document.getElementById('toggleRegIcon');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const toggleConfirmPasswordIcon = document.getElementById('toggleConfirmIcon');
+
+    // Toggle password visibility
+    if (togglePassword && passwordField && togglePasswordIcon) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+
+            if (type === 'text') {
+                togglePasswordIcon.classList.remove('fa-eye');
+                togglePasswordIcon.classList.add('fa-eye-slash');
+                togglePassword.setAttribute('title', 'Hide password');
+            } else {
+                togglePasswordIcon.classList.remove('fa-eye-slash');
+                togglePasswordIcon.classList.add('fa-eye');
+                togglePassword.setAttribute('title', 'Show password');
+            }
+        });
+        togglePassword.setAttribute('title', 'Show password');
+    }
+
+    // Toggle confirm password visibility
+    if (toggleConfirmPassword && confirmPasswordField && toggleConfirmPasswordIcon) {
+        toggleConfirmPassword.addEventListener('click', function() {
+            const type = confirmPasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordField.setAttribute('type', type);
+
+            if (type === 'text') {
+                toggleConfirmPasswordIcon.classList.remove('fa-eye');
+                toggleConfirmPasswordIcon.classList.add('fa-eye-slash');
+                toggleConfirmPassword.setAttribute('title', 'Hide password');
+            } else {
+                toggleConfirmPasswordIcon.classList.remove('fa-eye-slash');
+                toggleConfirmPasswordIcon.classList.add('fa-eye');
+                toggleConfirmPassword.setAttribute('title', 'Show password');
+            }
+        });
+        toggleConfirmPassword.setAttribute('title', 'Show password');
+    }
+
+        function validatePasswordMatch() {
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    confirmPasswordField.classList.remove('is-invalid');
+                    confirmPasswordField.classList.add('is-valid');
+                    passwordMatchDiv.textContent = '';
+                } else {
+                    confirmPasswordField.classList.remove('is-valid');
+                    confirmPasswordField.classList.add('is-invalid');
+                    passwordMatchDiv.textContent = 'Passwords do not match';
+                }
+            } else {
+                confirmPasswordField.classList.remove('is-valid', 'is-invalid');
+                passwordMatchDiv.textContent = '';
+            }
+        }
+
+        // Validate on input for both fields
+        passwordField.addEventListener('input', validatePasswordMatch);
+        confirmPasswordField.addEventListener('input', validatePasswordMatch);
+
+        // Prevent form submission if passwords don't match
+        form.addEventListener('submit', function(e) {
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                confirmPasswordField.classList.add('is-invalid');
+                passwordMatchDiv.textContent = 'Passwords do not match';
+                confirmPasswordField.focus();
+            }
+        });
+    });
+
+</script>
+
+<style>
+    .hero-section {
+        background: #ffffff;
+        padding: 4rem 0;
+        position: relative;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #0d6efd, #1e40af);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .brand-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: #0d6efd;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .brand-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .auth-card {
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .input-group .btn {
+        border-left: 0;
+        min-width: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+    }
+
+        .input-group .btn i {
+            font-size: 16px;
+        }
+
+    .input-group-text {
+        background: white;
+        border-right: 0;
+    }
+
+    .form-control.border-start-0 {
+        border-left: 0;
+    }
+
+    .btn.border-start-0 {
+        border-left: 0;
+    }
+</style>
+
+

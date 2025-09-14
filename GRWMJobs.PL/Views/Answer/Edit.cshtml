@@ -1,0 +1,59 @@
+﻿@model GRWMJobs.DAL.Models.Answer
+@{
+    ViewData["Title"] = "Edit Answer";
+    var q = ViewBag.Question as GRWMJobs.DAL.Models.Question;
+}
+<div class="container py-4">
+    <h3>Edit Answer</h3>
+    <div class="mb-3">
+        <label class="form-label">Question</label>
+        <div class="form-control bg-light">@q?.Title</div>
+    </div>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="QuestionId" />
+        <div class="mb-3">
+            <label class="form-label">Answer</label>
+            <textarea asp-for="Content" class="form-control" rows="6"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Image (optional)</label>
+            @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+            {
+                <div class="mb-2">
+                    <img src="@Model.ImagePath" alt="Current image" style="max-height:120px;border:1px solid #ddd;padding:4px;border-radius:4px;" />
+                </div>
+            }
+            <input type="file" name="image" accept="image/*" class="form-control" />
+        </div>
+        @if (Model.Images != null && Model.Images.Any())
+        {
+            <div class="mb-3">
+                <label class="form-label">Existing Images</label>
+                <div>
+                    @foreach (var img in Model.Images)
+                    {
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <img src="@img.FilePath" alt="Answer image" style="height:90px;width:auto;border:1px solid #eee;padding:3px;border-radius:4px;" />
+                            <form asp-action="DeleteImage" method="post" class="mb-0">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@img.Id" />
+                                <input type="hidden" name="answerId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <div class="mb-3">
+            <label class="form-label">Add More Images (optional)</label>
+            <input type="file" name="images" accept="image/*" class="form-control" multiple />
+        </div>
+        <button type="submit" class="btn btn-primary" formaction="@Url.Action("Edit", "Answer", new { categoryId = q?.CategoryId })">Save</button>
+        <a class="btn btn-secondary" asp-controller="Category" asp-action="Details" asp-route-id="@q?.CategoryId">Cancel</a>
+    </form>
+</div>
+
+
