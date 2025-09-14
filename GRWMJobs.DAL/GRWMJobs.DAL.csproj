@@ -19,10 +19,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Models\" />
-    <Folder Include="Repositores\Interfaces\" />
-  </ItemGroup>
-
 </Project>
