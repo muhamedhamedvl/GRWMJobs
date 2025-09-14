@@ -1,0 +1,125 @@
+﻿@model GRWMJobs.PL.Models.SubcategoryQuestionsViewModel
+@{
+    ViewData["Title"] = Model.Subcategory.Name + " Questions";
+}
+<div class="container py-5">
+    <div class="page-head">
+        <div>
+            <h3 class="mb-0">@Model.Subcategory.Name</h3>
+        </div>
+        <div class="page-actions">
+            <a class="btn btn-outline-secondary" href="@Url.Action("Details", "Category", new { id = Model.Subcategory.CategoryId })"><i class="fa-solid fa-arrow-left me-2"></i>Back</a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a class="btn btn-primary" href="@Url.Action("Create", "Question", new { categoryId = Model.Subcategory.CategoryId, subcategoryId = Model.Subcategory.Id })">Add Question</a>
+            }
+        </div>
+    </div>
+
+    <form method="get" action="@Url.Action("Details","Subcategory")" class="row g-2 align-items-center mb-3">
+        <input type="hidden" name="id" value="@Model.Subcategory.Id" />
+        <div class="col-sm-8 col-md-9">
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Search questions..." />
+        </div>
+        <div class="col-sm-4 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+            <a class="btn btn-outline-secondary" href="@Url.Action("Details", "Subcategory", new { id = Model.Subcategory.Id })">Reset</a>
+        </div>
+    </form>
+    <div class="accordion" id="qaAccordion">
+        @foreach (var q in Model.Questions)
+        {
+            <div class="accordion-item shadow-sm mb-3 border-0">
+                <h2 class="accordion-header" id="heading-@q.Id">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@q.Id" aria-expanded="false" aria-controls="collapse-@q.Id">
+                        <span class="me-2 text-primary"><i class="fa-solid fa-circle-question"></i></span>
+                        <strong>@q.Title</strong>
+                    </button>
+                </h2>
+                <div id="collapse-@q.Id" class="accordion-collapse collapse" aria-labelledby="heading-@q.Id" data-bs-parent="#qaAccordion">
+                    <div class="accordion-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <button class="btn btn-sm btn-outline-success load-answers" data-question-id="@q.Id">
+                                    <i class="fa-solid fa-eye me-1"></i> Show Answer
+                                </button>
+                            </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="d-flex gap-2">
+                                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit", "Question", new { id = q.Id })">Edit</a>
+                                    <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "Question", new { id = q.Id, categoryId = Model.Subcategory.CategoryId, subcategoryId = Model.Subcategory.Id })">Delete</a>
+                                </div>
+                            }
+                        </div>
+                        @* Show question images before answers *@
+                        @if (!string.IsNullOrEmpty(q.ImagePath))
+                        {
+                            <img src="@q.ImagePath" alt="Question image" class="img-fluid rounded-3 border mb-2 shadow-sm" style="max-height:520px; width:100%; object-fit:contain;" />
+                        }
+                        @if (q.Images != null && q.Images.Any())
+                        {
+                            <div class="mt-2">
+                                @foreach (var img in q.Images)
+                                {
+                                    <img src="@img.FilePath" alt="Question image" class="img-fluid rounded-3 border mb-2 shadow-sm" style="max-height:520px; width:100%; object-fit:contain;" />
+                                }
+                            </div>
+                        }
+                        <div id="answers-@q.Id" class="answers">
+                            <div class="answers-container mt-3"></div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="btn btn-sm btn-primary mt-2" href="@Url.Action("Create", "Answer", new { questionId = q.Id })">Add Answer</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted">
+            Showing @(((Model.Page - 1) * Model.PageSize) + 1) - @(((((Model.Page - 1) * Model.PageSize) + Model.Questions.Count()) > Model.TotalCount) ? Model.TotalCount : (((Model.Page - 1) * Model.PageSize) + Model.Questions.Count()))
+        </div>
+        <nav aria-label="Questions pagination">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("Details", "Subcategory", new { id = Model.Subcategory.Id, search = Model.Search, page = Model.Page - 1, pageSize = Model.PageSize })">Previous</a>
+                </li>
+                @for (var p = 1; p <= Model.TotalPages; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Details", "Subcategory", new { id = Model.Subcategory.Id, search = Model.Search, page = p, pageSize = Model.PageSize })">@p</a>
+                    </li>
+                }
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" href="@Url.Action("Details", "Subcategory", new { id = Model.Subcategory.Id, search = Model.Search, page = Model.Page + 1, pageSize = Model.PageSize })">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('click', async function (e) {
+            const btn = e.target.closest('.load-answers');
+            if (!btn) return;
+            const qid = btn.getAttribute('data-question-id');
+            const container = btn.closest('.accordion-body').querySelector('.answers-container');
+            if (container.getAttribute('data-loaded') === '1') {
+                container.classList.toggle('d-none');
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
+            const res = await fetch('@Url.Action("Answers", "Question")?questionId=' + qid);
+            const html = await res.text();
+            container.innerHTML = html;
+            container.setAttribute('data-loaded', '1');
+            btn.remove();
+        });
+    </script>
+</div>
+
+

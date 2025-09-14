@@ -1,0 +1,19 @@
+﻿@model GRWMJobs.DAL.Models.Subcategory
+@{
+    ViewData["Title"] = "Delete Subcategory";
+}
+<div class="container py-4">
+    <div class="content-panel">
+        <h3 class="text-danger">Delete Subcategory</h3>
+        <p>Are you sure you want to delete the subcategory "@Model.Name"?</p>
+        <form method="post" action="@Url.Action("DeleteConfirmed","Subcategory", new { id = Model.Id })">
+            @Html.AntiForgeryToken()
+            <div class="page-actions">
+                <button type="submit" class="btn btn-danger">Yes, delete</button>
+                <a class="btn btn-secondary" asp-controller="Category" asp-action="Details" asp-route-id="@Model.CategoryId">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
