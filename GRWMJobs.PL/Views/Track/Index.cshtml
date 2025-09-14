@@ -1,0 +1,165 @@
+﻿@model IEnumerable<GRWMJobs.DAL.Models.Track>
+@{
+    ViewData["Title"] = "Tracks";
+}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Explore Career Tracks</h1>
+        <p class="lead text-muted">Pick a track to dive into curated interview questions.</p>
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="btn btn-primary" href="@Url.Action("Create", "Track")">Add New Track</a>
+        }
+    </div>
+    <div class="row g-4">
+        @foreach (var track in Model)
+        {
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 track-card border-0">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            @if (!string.IsNullOrEmpty(track.ImagePath))
+                            {
+                                <img src="@track.ImagePath" alt="@track.Name image" class="me-3 rounded-circle border" style="width:44px;height:44px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-microchip fa-2xl text-primary me-3"></i>
+                            }
+                            <h5 class="card-title mb-0">@track.Name</h5>
+                        </div>
+                        @if (track.Name != "General")
+                        {
+                            <p class="card-text text-muted">Crack interviews with handpicked questions for @track.Name.</p>
+                        }
+                        <a class="btn btn-primary stretched-link" href="@Url.Action("Details", "Track", new { id = track.Id })">Details</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="mt-3 d-flex gap-2">
+                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit", "Track", new { id = track.Id })">Edit</a>
+                                <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", "Track", new { id = track.Id })">Delete</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .track-card {
+        transition: transform .25s ease;
+    }
+
+        .track-card:hover {
+            transform: translateY(-6px);
+        }
+</style>
+
+
+<!-- Motivational Message Section -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="text-center motivational-message">
+                <h2 class="motivational-title mb-3">Best Wishes</h2>
+                <h3 class="motivational-subtitle mb-4">for the Interview!</h3>
+                <p class="motivational-text">Be confident and believe in yourself.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="noResults" class="text-center text-muted py-5 d-none">
+    <i class="fa-regular fa-face-frown me-2"></i>No tracks match your search.
+</div>
+
+<style>
+    .track-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        transition: all .2s ease;
+    }
+
+        .track-card:hover {
+            transform: translateY(-2px);
+            border-color: #0d6efd;
+        }
+
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        background: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.2s ease;
+    }
+
+        .icon-circle:hover {
+            background: #0b5ed7;
+        }
+
+    .track-image {
+        transition: all 0.2s ease;
+    }
+
+        .track-image:hover {
+            transform: scale(1.05);
+        }
+
+    /* Motivational Message Styles */
+    .motivational-message {
+        background: linear-gradient(135deg, #fef7f7, #fce8e8);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        border: 1px solid #f5d0d0;
+        box-shadow: 0 4px 20px rgba(220, 38, 127, 0.1);
+    }
+
+    .motivational-title {
+        font-family: 'Brush Script MT', cursive, 'Dancing Script', cursive;
+        font-size: 3.5rem;
+        font-weight: 400;
+        color: #8b1538;
+        text-shadow: 2px 2px 4px rgba(139, 21, 56, 0.2);
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+    }
+
+    .motivational-subtitle {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #8b1538;
+        margin-bottom: 1rem;
+    }
+
+    .motivational-text {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #8b1538;
+        margin-bottom: 0;
+        line-height: 1.4;
+    }
+
+    @@media (max-width: 768px) {
+        .motivational-title {
+            font-size: 2.5rem;
+        }
+
+        .motivational-subtitle {
+            font-size: 1.4rem;
+        }
+
+        .motivational-text {
+            font-size: 1.1rem;
+        }
+
+        .motivational-message {
+            padding: 2rem 1.5rem;
+        }
+    }
+</style>
