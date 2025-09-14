@@ -1,10 +1,5 @@
 # GRWMJobs - Get Ready With Me Jobs Platform
 
-![.NET](https://img.shields.io/badge/.NET-9.0-blue)
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-9.0-green)
-![Entity Framework](https://img.shields.io/badge/Entity%20Framework-9.0-orange)
-![SQL Server](https://img.shields.io/badge/SQL%20Server-Database-red)
-
 A curated Q&A platform featuring handpicked interview questions and answers across different career tracks and categories. Users can register, browse questions, and view detailed answers to prepare for job interviews.
 
 **Author:** [Muhamed Hamed](https://github.com/muhamedhamedvl) | [LinkedIn](https://www.linkedin.com/in/muhamed-muhamed-3a2a25250/)
