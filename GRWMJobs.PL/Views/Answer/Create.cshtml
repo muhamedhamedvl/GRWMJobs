@@ -1,0 +1,32 @@
+﻿@model GRWMJobs.DAL.Models.Answer
+@{
+    ViewData["Title"] = "Add Answer";
+    var q = ViewBag.Question as GRWMJobs.DAL.Models.Question;
+}
+<div class="container py-4">
+    <h3>Add Answer</h3>
+    <div class="mb-3">
+        <label class="form-label">Question</label>
+        <div class="form-control bg-light">@q?.Title</div>
+    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="QuestionId" />
+        <div class="mb-3">
+            <label class="form-label">Answer</label>
+            <textarea asp-for="Content" class="form-control" rows="6"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Image (optional)</label>
+            <input type="file" name="image" accept="image/*" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Additional Images (optional, multiple)</label>
+            <input type="file" name="images" accept="image/*" class="form-control" multiple />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a class="btn btn-secondary" asp-controller="Category" asp-action="Details" asp-route-id="@q?.CategoryId">Cancel</a>
+    </form>
+</div>
+
+
